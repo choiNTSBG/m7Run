@@ -1,4 +1,4 @@
-package com.snod.m7run
+package com.example.m7run
 
 import io.flutter.embedding.android.FlutterActivity
 
