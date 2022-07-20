@@ -33,6 +33,8 @@
 	</dict>
 	<key>NSHealthShareUsageDescription</key>
 	<string>We require access to health data for our app.</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>We will sync your data with the Apple Health app to give you better insights</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Using Location Usage</string>
 	<key>NSMotionUsageDescription</key>
