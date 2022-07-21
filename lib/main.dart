@@ -39,6 +39,7 @@ class _HealthAppState extends State<HealthApp> {
 
     // define the types to get
     final types = [
+      HealthDataType.ACTIVE_ENERGY_BURNED,
       HealthDataType.STEPS,
       HealthDataType.WEIGHT,
       HealthDataType.HEIGHT,
@@ -55,12 +56,12 @@ class _HealthAppState extends State<HealthApp> {
       HealthDataAccess.READ,
       HealthDataAccess.READ,
       HealthDataAccess.READ,
-      // HealthDataAccess.READ,
+      HealthDataAccess.READ,
     ];
 
     // get data within the last 24 hours
     final now = DateTime.now();
-    final yesterday = now.subtract(Duration(days: 5));
+    final yesterday = now.subtract(const Duration(days: 5));
     // requesting access to the data types before reading them
     // note that strictly speaking, the [permissions] are not
     // needed, since we only want READ access.
