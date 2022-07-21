@@ -40,6 +40,9 @@ class _HealthAppState extends State<HealthApp> {
     // define the types to get
     final types = [
       HealthDataType.ACTIVE_ENERGY_BURNED,
+      HealthDataType.SLEEP_ASLEEP,
+      HealthDataType.SLEEP_AWAKE,
+      HealthDataType.SLEEP_IN_BED,
       // HealthDataType.STEPS,
       // HealthDataType.WEIGHT,
       // HealthDataType.HEIGHT,
@@ -51,6 +54,9 @@ class _HealthAppState extends State<HealthApp> {
 
     // with coresponsing permissions
     final permissions = [
+      HealthDataAccess.READ,
+      HealthDataAccess.READ,
+      HealthDataAccess.READ,
       HealthDataAccess.READ,
       // HealthDataAccess.READ,
       // HealthDataAccess.READ,
