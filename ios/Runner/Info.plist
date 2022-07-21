@@ -38,7 +38,11 @@
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Using Location Usage</string>
 	<key>NSMotionUsageDescription</key>
-	<string>we need access for motion</string>
+    <string>This application tracks your steps</string>
+    <key>UIBackgroundModes</key>
+    <array>
+        <string>processing</string>
+    </array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen-iPhone</string>
 	<key>UILaunchStoryboardName~iphone</key>
