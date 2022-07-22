@@ -37,6 +37,9 @@ dependencies:
   health: ^4.1.1
   permission_handler: ^10.0.0
 #  pedometer: ^3.0.0
+  geolocator: 9.0.1
+  baseflow_plugin_template:
+    path: E:\Rhylvin\baseflow\baseflow_plugin_template
 
 dev_dependencies:
   flutter_test:
@@ -63,7 +66,10 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+  #   - images/a_dot_ham.jpegflutter:
+  assets:
+    - packages/baseflow_plugin_template/logo.png
+    - packages/baseflow_plugin_template/poweredByBaseflow.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
