@@ -353,6 +353,7 @@ import 'dart:io' show Platform;
 import 'package:baseflow_plugin_template/baseflow_plugin_template.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:m7run/utility/calculator.dart';
 
 /// Defines the main theme color.
 final MaterialColor themeMaterialColor =
@@ -388,14 +389,17 @@ class _GeolocatorWidgetState extends State<GeolocatorWidget> {
 
   final GeolocatorPlatform _geolocatorPlatform = GeolocatorPlatform.instance;
   final List<_PositionItem> _positionItems = <_PositionItem>[];
+  final List<Position> _positions = <Position>[];
   StreamSubscription<Position>? _positionStreamSubscription;
   StreamSubscription<ServiceStatus>? _serviceStatusStreamSubscription;
   bool positionStreamStarted = false;
 
+  Timer? timer;
   @override
   void initState() {
     super.initState();
     _toggleServiceStatusStream();
+    timer = Timer.periodic(const Duration(seconds: 1), (Timer t) => _calculateSpeed());
   }
 
   PopupMenuButton _createActions() {
@@ -516,11 +520,11 @@ class _GeolocatorWidgetState extends State<GeolocatorWidget> {
                     backgroundColor: _determineButtonColor(),
                   ),
                   sizedBox,
-                  FloatingActionButton(
-                    child: const Icon(Icons.my_location),
-                    onPressed: _getCurrentPosition,
-                  ),
-                  sizedBox,
+                  // FloatingActionButton(
+                  //   child: const Icon(Icons.my_location),
+                  //   onPressed: _getCurrentPosition,
+                  // ),
+                  // sizedBox,
                   FloatingActionButton(
                     child: const Icon(Icons.bookmark),
                     onPressed: _getLastKnownPosition,
@@ -532,18 +536,44 @@ class _GeolocatorWidgetState extends State<GeolocatorWidget> {
         ]);
   }
 
-  Future<void> _getCurrentPosition() async {
-    final hasPermission = await _handlePermission();
+  Future<void> _calculateSpeed()  async {
 
-    if (!hasPermission) {
+    if(_positions.isEmpty) {
+
+      Position position = await _getCurrentPosition();
+      _positions.add(position);
       return;
     }
+    Position position = await _getCurrentPosition();
+    _positions.add(position);
+
+    // print("_positions.first.latitude: ${_positions.first.latitude} + ")
+    var speed = getSpeed(Geolocator.distanceBetween(_positions.first.latitude, _positions.first.longitude, position.latitude, position.longitude));
+
+    if(_positions.length >= 2) {
+      _positions.removeAt(0);
+    }
+    _updatePositionList(
+      _PositionItemType.log,
+      speed,
+    );
+
+  }
+
+  Future<Position> _getCurrentPosition() async {
+    final hasPermission = await _handlePermission();
+
+    // if (!hasPermission) {
+    //   return null;
+    // }
 
     final position = await _geolocatorPlatform.getCurrentPosition();
-    _updatePositionList(
-      _PositionItemType.position,
-      position.toString(),
-    );
+    // _updatePositionList(
+    //   _PositionItemType.position,
+    //   position.toString(),
+    // );
+
+    return position;
   }
 
   Future<bool> _handlePermission() async {
@@ -594,10 +624,10 @@ class _GeolocatorWidgetState extends State<GeolocatorWidget> {
 
     // When we reach here, permissions are granted and we can
     // continue accessing the position of the device.
-    _updatePositionList(
-      _PositionItemType.log,
-      _kPermissionGrantedMessage,
-    );
+    // _updatePositionList(
+    //   _PositionItemType.log,
+    //   _kPermissionGrantedMessage,
+    // );
     return true;
   }
 
