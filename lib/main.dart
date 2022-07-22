@@ -503,23 +503,23 @@ class _GeolocatorWidgetState extends State<GeolocatorWidget> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  FloatingActionButton(
-                    child: (_positionStreamSubscription == null ||
-                        _positionStreamSubscription!.isPaused)
-                        ? const Icon(Icons.play_arrow)
-                        : const Icon(Icons.pause),
-                    onPressed: () {
-                      positionStreamStarted = !positionStreamStarted;
-                      _toggleListening();
-                    },
-                    tooltip: (_positionStreamSubscription == null)
-                        ? 'Start position updates'
-                        : _positionStreamSubscription!.isPaused
-                        ? 'Resume'
-                        : 'Pause',
-                    backgroundColor: _determineButtonColor(),
-                  ),
-                  sizedBox,
+                  // FloatingActionButton(
+                  //   child: (_positionStreamSubscription == null ||
+                  //       _positionStreamSubscription!.isPaused)
+                  //       ? const Icon(Icons.play_arrow)
+                  //       : const Icon(Icons.pause),
+                  //   onPressed: () {
+                  //     positionStreamStarted = !positionStreamStarted;
+                  //     _toggleListening();
+                  //   },
+                  //   tooltip: (_positionStreamSubscription == null)
+                  //       ? 'Start position updates'
+                  //       : _positionStreamSubscription!.isPaused
+                  //       ? 'Resume'
+                  //       : 'Pause',
+                  //   backgroundColor: _determineButtonColor(),
+                  // ),
+                  // sizedBox,
                   // FloatingActionButton(
                   //   child: const Icon(Icons.my_location),
                   //   onPressed: _getCurrentPosition,
@@ -539,24 +539,26 @@ class _GeolocatorWidgetState extends State<GeolocatorWidget> {
   Future<void> _calculateSpeed()  async {
 
     if(_positions.isEmpty) {
-
       Position position = await _getCurrentPosition();
       _positions.add(position);
       return;
     }
+
     Position position = await _getCurrentPosition();
+    var speed = getSpeed(Geolocator.distanceBetween(_positions.last.latitude, _positions.last.longitude, position.latitude, position.longitude));
     _positions.add(position);
 
-    // print("_positions.first.latitude: ${_positions.first.latitude} + ")
-    var speed = getSpeed(Geolocator.distanceBetween(_positions.first.latitude, _positions.first.longitude, position.latitude, position.longitude));
 
     if(_positions.length >= 2) {
       _positions.removeAt(0);
     }
-    _updatePositionList(
-      _PositionItemType.log,
-      speed,
-    );
+
+    if(speed < 10) {
+      _updatePositionList(
+        _PositionItemType.log,
+        '${speed.toStringAsFixed(2)} km/hr',
+      );
+    }
 
   }
 
@@ -586,10 +588,10 @@ class _GeolocatorWidgetState extends State<GeolocatorWidget> {
       // Location services are not enabled don't continue
       // accessing the position and request users of the
       // App to enable the location services.
-      _updatePositionList(
-        _PositionItemType.log,
-        _kLocationServicesDisabledMessage,
-      );
+      // _updatePositionList(
+      //   _PositionItemType.log,
+      //   _kLocationServicesDisabledMessage,
+      // );
 
       return false;
     }
@@ -603,10 +605,10 @@ class _GeolocatorWidgetState extends State<GeolocatorWidget> {
         // Android's shouldShowRequestPermissionRationale
         // returned true. According to Android guidelines
         // your App should show an explanatory UI now.
-        _updatePositionList(
-          _PositionItemType.log,
-          _kPermissionDeniedMessage,
-        );
+        // _updatePositionList(
+        //   _PositionItemType.log,
+        //   _kPermissionDeniedMessage,
+        // );
 
         return false;
       }
@@ -614,10 +616,10 @@ class _GeolocatorWidgetState extends State<GeolocatorWidget> {
 
     if (permission == LocationPermission.deniedForever) {
       // Permissions are denied forever, handle appropriately.
-      _updatePositionList(
-        _PositionItemType.log,
-        _kPermissionDeniedForeverMessage,
-      );
+      // _updatePositionList(
+      //   _PositionItemType.log,
+      //   _kPermissionDeniedForeverMessage,
+      // );
 
       return false;
     }
@@ -632,6 +634,7 @@ class _GeolocatorWidgetState extends State<GeolocatorWidget> {
   }
 
   void _updatePositionList(_PositionItemType type, String displayValue) {
+    _positionItems.clear();
     _positionItems.add(_PositionItem(type, displayValue));
     setState(() {});
   }
@@ -662,16 +665,16 @@ class _GeolocatorWidgetState extends State<GeolocatorWidget> {
                 setState(() {
                   _positionStreamSubscription?.cancel();
                   _positionStreamSubscription = null;
-                  _updatePositionList(
-                      _PositionItemType.log, 'Position Stream has been canceled');
+                  // _updatePositionList(
+                  //     _PositionItemType.log, 'Position Stream has been canceled');
                 });
               }
               serviceStatusValue = 'disabled';
             }
-            _updatePositionList(
-              _PositionItemType.log,
-              'Location service has been $serviceStatusValue',
-            );
+            // _updatePositionList(
+            //   _PositionItemType.log,
+            //   'Location service has been $serviceStatusValue',
+            // );
           });
     }
   }
@@ -679,14 +682,14 @@ class _GeolocatorWidgetState extends State<GeolocatorWidget> {
   void _toggleListening() {
     if (_positionStreamSubscription == null) {
       final positionStream = _geolocatorPlatform.getPositionStream();
-      _positionStreamSubscription = positionStream.handleError((error) {
-        _positionStreamSubscription?.cancel();
-        _positionStreamSubscription = null;
-      }).listen((position) => _updatePositionList(
-        _PositionItemType.position,
-        position.toString(),
-      ));
-      _positionStreamSubscription?.pause();
+      // _positionStreamSubscription = positionStream.handleError((error) {
+      //   _positionStreamSubscription?.cancel();
+      //   _positionStreamSubscription = null;
+      // }).listen((position) => _updatePositionList(
+      //   _PositionItemType.position,
+      //   position.toString(),
+      // ));
+      // _positionStreamSubscription?.pause();
     }
 
     setState(() {
@@ -703,10 +706,10 @@ class _GeolocatorWidgetState extends State<GeolocatorWidget> {
         statusDisplayValue = 'paused';
       }
 
-      _updatePositionList(
-        _PositionItemType.log,
-        'Listening for position updates $statusDisplayValue',
-      );
+      // _updatePositionList(
+      //   _PositionItemType.log,
+      //   'Listening for position updates $statusDisplayValue',
+      // );
     });
   }
 
